@@ -3,6 +3,7 @@ from sqlmodel import Session, select
 from app.database import engine
 from app.models import Pokemon
 from app.schemas import PokemonCreate
+from app.repositories.pokemon_repository import create_pokemon_repository
 
 
 def create_pokemon_service(pokemon: PokemonCreate):
@@ -13,15 +14,7 @@ def create_pokemon_service(pokemon: PokemonCreate):
         pokemon_type=pokemon.pokemon_type,
     )
 
-    with Session(engine) as session:
-
-        session.add(db_pokemon)
-
-        session.commit()
-
-        session.refresh(db_pokemon)
-
-        return db_pokemon
+    return create_pokemon_repository(db_pokemon)
 
 
 def get_pokemons_service():
