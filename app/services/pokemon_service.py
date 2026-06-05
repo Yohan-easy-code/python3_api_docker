@@ -1,38 +1,30 @@
-from fastapi import FastAPI, HTTPException
-from sqlmodel import SQLModel, Field, create_engine, Session
-from sqlmodel import select
+from sqlmodel import Session, select
 
-app = FastAPI()
-
-
-class Pokemon(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    name: str
-    hp: int
-    pokemon_type: str
+from app.database import engine
+from app.models import Pokemon
+from app.schemas import PokemonCreate
 
 
-sqlite_url = "sqlite:///database.db"
-engine = create_engine(sqlite_url, echo=True)
+def create_pokemon_service(pokemon: PokemonCreate):
 
+    db_pokemon = Pokemon(
+        name=pokemon.name,
+        hp=pokemon.hp,
+        pokemon_type=pokemon.pokemon_type,
+    )
 
-@app.on_event("startup")
-def on_startup():
-    SQLModel.metadata.create_all(engine)
-
-
-@app.post("/pokemon")
-def create_pokemon(pokemon: Pokemon):
     with Session(engine) as session:
-        session.add(pokemon)
+
+        session.add(db_pokemon)
+
         session.commit()
-        session.refresh(pokemon)
 
-        return pokemon
+        session.refresh(db_pokemon)
+
+        return db_pokemon
 
 
-@app.get("/pokemonss")
-def get_pokemons():
+def get_pokemons_service():
 
     with Session(engine) as session:
 
@@ -41,11 +33,8 @@ def get_pokemons():
         return pokemons
 
 
-@app.get("/pokemon/{pokemon_id}")
-def get_pokemon(pokemon_id: int):
-
+def get_pokemon_service(pokemon_id: int):
     with Session(engine) as session:
-
         pokemon = session.get(Pokemon, pokemon_id)
 
         if pokemon is None:
@@ -54,15 +43,11 @@ def get_pokemon(pokemon_id: int):
         return pokemon
 
 
-@app.put("/pokemon/{pokemon_id}")
-def update_pokemon(pokemon_id: int, updated_pokemon: Pokemon):
-
+def put_update_pokemon_service(pokemon_id: int, updated_pokemon: PokemonUpdate):
     with Session(engine) as session:
-
         pokemon = session.get(Pokemon, pokemon_id)
 
         if pokemon is None:
-
             raise HTTPException(status_code=404, detail="Pokemon not found")
 
         pokemon.name = updated_pokemon.name
@@ -70,19 +55,14 @@ def update_pokemon(pokemon_id: int, updated_pokemon: Pokemon):
         pokemon.pokemon_type = updated_pokemon.pokemon_type
 
         session.add(pokemon)
-
         session.commit()
-
         session.refresh(pokemon)
 
         return pokemon
 
 
-@app.delete("/pokemon/{pokemon_id}")
-def delete_pokemon(pokemon_id: int):
-
+def delete_pokemon_service(pokemon_id: int):
     with Session(engine) as session:
-
         pokemon = session.get(Pokemon, pokemon_id)
 
         if pokemon is None:
