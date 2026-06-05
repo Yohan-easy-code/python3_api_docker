@@ -31,7 +31,7 @@ def create_pokemon(pokemon: Pokemon):
         return pokemon
 
 
-@app.get("/pokemons")
+@app.get("/pokemonss")
 def get_pokemons():
 
     with Session(engine) as session:
