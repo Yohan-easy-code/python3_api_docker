@@ -1,9 +1,9 @@
 from sqlmodel import create_engine, SQLModel
+from dotenv import load_dotenv
+import os
 
-sqlite_url = "sqlite:///database.db"
+load_dotenv()
 
-engine = create_engine(sqlite_url, echo=True)
+database_url = os.getenv("DATABASE_URL")
 
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+engine = create_engine(database_url, echo=True)

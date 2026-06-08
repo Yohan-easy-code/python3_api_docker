@@ -6,3 +6,7 @@ class Pokemon(SQLModel, table=True):
     name: str
     hp: int
     pokemon_type: str
+    level: int = 1
+    attack: str
+    mana: int
+    capa: str
