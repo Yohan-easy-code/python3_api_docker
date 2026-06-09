@@ -1,8 +1,8 @@
 from sqlmodel import Session, select
 
 from app.database import engine
-from app.models import Pokemon
-from app.schemas import PokemonCreate
+from app.models.pokemon import Pokemon
+from app.schemas import PokemonCreate, PokemonUpdate
 from app.repositories.pokemon_repository import create_pokemon_repository
 
 
@@ -12,6 +12,11 @@ def create_pokemon_service(pokemon: PokemonCreate):
         name=pokemon.name,
         hp=pokemon.hp,
         pokemon_type=pokemon.pokemon_type,
+        level=pokemon.level,
+        attack=pokemon.attack,
+        mana=pokemon.mana,
+        capa=pokemon.capa,
+        trainer_id=pokemon.trainer_id,
     )
 
     return create_pokemon_repository(db_pokemon)

@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
 from app.database import engine
-from app.models import Pokemon
+from app.models.pokemon import Pokemon
 from app.schemas import PokemonCreate, PokemonUpdate
 from app.services.pokemon_service import (
     create_pokemon_service,

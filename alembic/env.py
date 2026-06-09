@@ -1,7 +1,7 @@
 from logging.config import fileConfig
 
 from sqlmodel import SQLModel
-from app.models import Pokemon
+from app.models import Pokemon, Trainer
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool

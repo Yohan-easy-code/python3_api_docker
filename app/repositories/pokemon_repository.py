@@ -1,7 +1,7 @@
 from sqlmodel import Session
 
 from app.database import engine
-from app.models import Pokemon
+from app.models.pokemon import Pokemon
 
 
 def create_pokemon_repository(pokemon):
