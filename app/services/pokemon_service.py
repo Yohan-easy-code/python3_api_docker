@@ -1,9 +1,15 @@
 from sqlmodel import Session, select
+from fastapi import HTTPException
 
 from app.database import engine
 from app.models.pokemon import Pokemon
 from app.schemas import PokemonCreate, PokemonUpdate
-from app.repositories.pokemon_repository import create_pokemon_repository
+from app.repositories.pokemon_repository import (
+    create_pokemon_repository,
+    get_pokemon_repository,
+    update_pokemon_repository,
+)
+from app.repositories.trainer_repository import get_trainer_repository
 
 
 def create_pokemon_service(pokemon: PokemonCreate):
@@ -70,3 +76,19 @@ def delete_pokemon_service(pokemon_id: int):
         session.commit()
 
         return {"message": "Pokemon deleted"}
+
+
+def assign_trainer_service(pokemon_id: int, trainer_id: int):
+    pokemon = get_pokemon_repository(pokemon_id)
+
+    if pokemon is None:
+        raise HTTPException(status_code=404, detail="Pokemon not found")
+
+    trainer = get_trainer_repository(trainer_id)
+
+    if trainer is None:
+        raise HTTPException(status_code=404, detail="Trainer not found")
+
+    pokemon.trainer_id = trainer_id
+
+    return update_pokemon_repository(pokemon)

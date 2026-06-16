@@ -10,6 +10,7 @@ from app.services.pokemon_service import (
     get_pokemon_service,
     put_update_pokemon_service,
     delete_pokemon_service,
+    assign_trainer_service,
 )
 
 router = APIRouter(prefix="/pokemon", tags=["Pokemon"])
@@ -34,6 +35,11 @@ def get_pokemon(pokemon_id: int):
 @router.put("/{pokemon_id}")
 def update_pokemon(pokemon_id: int, updated_pokemon: PokemonUpdate):
     return put_update_pokemon_service(pokemon_id, updated_pokemon)
+
+
+@router.put("/{pokemon_id}/trainer/{trainer_id}")
+def assign_trainer(pokemon_id: int, trainer_id: int):
+    return assign_trainer_service(pokemon_id, trainer_id)
 
 
 @router.delete("/{pokemon_id}")

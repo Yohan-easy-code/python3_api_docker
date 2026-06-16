@@ -6,6 +6,7 @@ from app.repositories.trainer_repository import (
     create_trainer_repository,
     get_trainers_repository,
     get_trainer_repository,
+    delete_trainer_repository,
 )
 
 
@@ -26,3 +27,14 @@ def get_trainer_service(trainer_id: int):
         raise HTTPException(status_code=404, detail="Trainer not found")
 
     return trainer
+
+
+def delete_trainer_service(trainer_id: int):
+
+    trainer = get_trainer_repository(trainer_id)
+
+    if trainer is None:
+
+        raise HTTPException(status_code=404, detail="Trainer not found")
+
+    return delete_trainer_repository(trainer)

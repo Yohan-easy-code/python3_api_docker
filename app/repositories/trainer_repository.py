@@ -1,4 +1,5 @@
 from sqlmodel import Session, select
+from sqlalchemy.orm import selectinload
 
 from app.database import engine
 from app.models import Trainer
@@ -19,5 +20,23 @@ def get_trainers_repository():
 
 
 def get_trainer_repository(trainer_id: int):
+
     with Session(engine) as session:
-        return session.get(Trainer, trainer_id)
+
+        statement = (
+            select(Trainer)
+            .where(Trainer.id == trainer_id)
+            .options(selectinload(Trainer.pokemons))
+        )
+
+        return session.exec(statement).first()
+
+
+def delete_trainer_repository(trainer: Trainer):
+    with Session(engine) as session:
+        db_trainer = session.get(Trainer, trainer.id)
+
+        session.delete(db_trainer)
+        session.commit()
+
+        return {"message": "Trainer deleted"}

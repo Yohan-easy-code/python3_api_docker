@@ -1,5 +1,6 @@
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
+from sqlalchemy import Column, Integer, ForeignKey
 
 if TYPE_CHECKING:
     from app.models.trainer import Trainer
@@ -16,6 +17,11 @@ class Pokemon(SQLModel, table=True):
     mana: int
     capa: str
 
-    trainer_id: int | None = Field(default=None, foreign_key="trainer.id")
+    trainer_id: int | None = Field(
+        default=None,
+        sa_column=Column(
+            Integer, ForeignKey("trainer.id", ondelete="SET NULL"), nullable=True
+        ),
+    )
 
     trainer: Optional["Trainer"] = Relationship(back_populates="pokemons")
