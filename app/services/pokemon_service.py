@@ -9,10 +9,28 @@ from app.repositories.pokemon_repository import (
     get_pokemon_repository,
     update_pokemon_repository,
 )
-from app.repositories.trainer_repository import get_trainer_repository
+from app.repositories.trainer_repository import (
+    get_trainer_repository,
+    count_pokemons_by_trainer_repository,
+)
 
 
 def create_pokemon_service(pokemon: PokemonCreate):
+
+    if pokemon.trainer_id is not None:
+        trainer = get_trainer_repository(pokemon.trainer_id)
+
+        if trainer is None:
+
+            raise HTTPException(status_code=404, detail="Trainer not found")
+
+        pokemon_count = count_pokemons_by_trainer_repository(pokemon.trainer_id)
+
+        if pokemon_count >= 6:
+
+            raise HTTPException(
+                status_code=400, detail="Trainer already has 6 pokemons"
+            )
 
     db_pokemon = Pokemon(
         name=pokemon.name,
@@ -79,6 +97,7 @@ def delete_pokemon_service(pokemon_id: int):
 
 
 def assign_trainer_service(pokemon_id: int, trainer_id: int):
+
     pokemon = get_pokemon_repository(pokemon_id)
 
     if pokemon is None:
@@ -88,6 +107,12 @@ def assign_trainer_service(pokemon_id: int, trainer_id: int):
 
     if trainer is None:
         raise HTTPException(status_code=404, detail="Trainer not found")
+
+    pokemon_count = count_pokemons_by_trainer_repository(trainer_id)
+
+    if pokemon_count >= 6:
+
+        raise HTTPException(status_code=400, detail="Trainer already has 6 pokemons")
 
     pokemon.trainer_id = trainer_id
 

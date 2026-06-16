@@ -2,7 +2,7 @@ from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 
 from app.database import engine
-from app.models import Trainer
+from app.models import Trainer, Pokemon
 
 
 def create_trainer_repository(trainer: Trainer):
@@ -40,3 +40,14 @@ def delete_trainer_repository(trainer: Trainer):
         session.commit()
 
         return {"message": "Trainer deleted"}
+
+
+def count_pokemons_by_trainer_repository(trainer_id: int):
+
+    with Session(engine) as session:
+
+        pokemons = session.exec(
+            select(Pokemon).where(Pokemon.trainer_id == trainer_id)
+        ).all()
+
+        return len(pokemons)
