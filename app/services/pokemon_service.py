@@ -6,6 +6,7 @@ from app.models.pokemon import Pokemon
 from app.schemas import PokemonCreate, PokemonUpdate
 from app.repositories.pokemon_repository import (
     create_pokemon_repository,
+    get_pokemons_repository,
     get_pokemon_repository,
     update_pokemon_repository,
 )
@@ -46,13 +47,14 @@ def create_pokemon_service(pokemon: PokemonCreate):
     return create_pokemon_repository(db_pokemon)
 
 
-def get_pokemons_service():
+def get_pokemons_service(
+    offset: int,
+    limit: int,
+    pokemon_type: str | None,
+    level: int | None,
+):
 
-    with Session(engine) as session:
-
-        pokemons = session.exec(select(Pokemon)).all()
-
-        return pokemons
+    return get_pokemons_repository(offset, limit, pokemon_type, level)
 
 
 def get_pokemon_service(pokemon_id: int):

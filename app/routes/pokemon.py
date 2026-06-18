@@ -23,8 +23,13 @@ def create_pokemon(pokemon: PokemonCreate):
 
 
 @router.get("/")
-def get_pokemons():
-    return get_pokemons_service()
+def get_pokemons(
+    offset: int = 0,
+    limit: int = 10,
+    pokemon_type: str | None = None,
+    level: int | None = None,
+):
+    return get_pokemons_service(offset, limit, pokemon_type, level)
 
 
 @router.get("/{pokemon_id}")

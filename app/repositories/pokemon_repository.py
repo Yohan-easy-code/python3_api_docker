@@ -1,4 +1,4 @@
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.database import engine
 from app.models.pokemon import Pokemon
@@ -15,6 +15,27 @@ def create_pokemon_repository(pokemon):
         session.refresh(pokemon)
 
         return pokemon
+
+
+def get_pokemons_repository(
+    offset: int = 0,
+    limit: int = 10,
+    pokemon_type: str | None = None,
+    level: int | None = None,
+):
+
+    with Session(engine) as session:
+        statement = select(Pokemon)
+
+        if pokemon_type is not None:
+            statement = statement.where(Pokemon.pokemon_type == pokemon_type)
+
+        if level is not None:
+            statement = statement.where(Pokemon.level == level)
+
+        statement = statement.offset(offset).limit(limit)
+
+        return session.exec(statement).all()
 
 
 def get_pokemon_repository(pokemon_id: int):
