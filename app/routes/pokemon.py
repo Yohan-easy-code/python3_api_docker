@@ -11,6 +11,7 @@ from app.services.pokemon_service import (
     put_update_pokemon_service,
     delete_pokemon_service,
     assign_trainer_service,
+    search_pokemons_by_name_service,
 )
 
 router = APIRouter(prefix="/pokemon", tags=["Pokemon"])
@@ -30,6 +31,11 @@ def get_pokemons(
     level: int | None = None,
 ):
     return get_pokemons_service(offset, limit, pokemon_type, level)
+
+
+@router.get("/search")
+def search_pokemons(name: str):
+    return search_pokemons_by_name_service(name)
 
 
 @router.get("/{pokemon_id}")

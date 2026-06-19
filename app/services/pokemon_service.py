@@ -9,6 +9,7 @@ from app.repositories.pokemon_repository import (
     get_pokemons_repository,
     get_pokemon_repository,
     update_pokemon_repository,
+    search_pokemons_by_name_repository,
 )
 from app.repositories.trainer_repository import (
     get_trainer_repository,
@@ -119,3 +120,7 @@ def assign_trainer_service(pokemon_id: int, trainer_id: int):
     pokemon.trainer_id = trainer_id
 
     return update_pokemon_repository(pokemon)
+
+
+def search_pokemons_by_name_service(name: str):
+    return search_pokemons_by_name_repository(name)

@@ -56,3 +56,10 @@ def update_pokemon_repository(pokemon: Pokemon):
         session.refresh(db_pokemon)
 
         return db_pokemon
+
+
+def search_pokemons_by_name_repository(name: str):
+    with Session(engine) as session:
+        statement = select(Pokemon).where(Pokemon.name.ilike(f"%{name}%"))
+
+        return session.exec(statement).all()
