@@ -1,5 +1,7 @@
 from sqlmodel import Session, select
 
+from fastapi import HTTPException
+
 from app.database import engine
 from app.models.pokemon import Pokemon
 
@@ -22,6 +24,8 @@ def get_pokemons_repository(
     limit: int = 10,
     pokemon_type: str | None = None,
     level: int | None = None,
+    sort_by: str | None = None,
+    order: str | None = None,
 ):
 
     with Session(engine) as session:
@@ -32,6 +36,18 @@ def get_pokemons_repository(
 
         if level is not None:
             statement = statement.where(Pokemon.level == level)
+
+        if sort_by is not None:
+
+            column = getattr(Pokemon, sort_by)
+
+            if order == "desc":
+
+                statement = statement.order_by(column.desc())
+
+            else:
+
+                statement = statement.order_by(column.asc())
 
         statement = statement.offset(offset).limit(limit)
 

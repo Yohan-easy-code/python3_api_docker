@@ -53,9 +53,24 @@ def get_pokemons_service(
     limit: int,
     pokemon_type: str | None,
     level: int | None,
+    sort_by: str | None = None,
+    order: str | None = None,
 ):
+    allowed_sort_fields = ["name", "level", "hp"]
+    allowed_orders = ["asc", "desc"]
 
-    return get_pokemons_repository(offset, limit, pokemon_type, level)
+    if sort_by is not None and sort_by not in allowed_sort_fields:
+        raise HTTPException(status_code=400, detail="Invalid sort field")
+
+    if order is not None and order not in allowed_orders:
+        raise HTTPException(status_code=400, detail="Invalid order")
+
+    if order is not None and sort_by is None:
+        raise HTTPException(
+            status_code=400, detail="sort_by is required when using order"
+        )
+
+    return get_pokemons_repository(offset, limit, pokemon_type, level, sort_by, order)
 
 
 def get_pokemon_service(pokemon_id: int):

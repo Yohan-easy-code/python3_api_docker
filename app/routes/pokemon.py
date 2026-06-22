@@ -29,8 +29,10 @@ def get_pokemons(
     limit: int = 10,
     pokemon_type: str | None = None,
     level: int | None = None,
+    sort_by: str | None = None,
+    order: str | None = None,
 ):
-    return get_pokemons_service(offset, limit, pokemon_type, level)
+    return get_pokemons_service(offset, limit, pokemon_type, level, sort_by, order)
 
 
 @router.get("/search")
