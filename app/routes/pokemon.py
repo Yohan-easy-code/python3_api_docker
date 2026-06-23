@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 
 from app.database import engine
@@ -13,13 +13,16 @@ from app.services.pokemon_service import (
     assign_trainer_service,
     search_pokemons_by_name_service,
 )
+from app.services.auth_service import get_current_user
 
 router = APIRouter(prefix="/pokemon", tags=["Pokemon"])
 
 
 @router.post("/")
-def create_pokemon(pokemon: PokemonCreate):
-
+def create_pokemon(
+    pokemon: PokemonCreate,
+    current_user=Depends(get_current_user),
+):
     return create_pokemon_service(pokemon)
 
 
@@ -46,15 +49,26 @@ def get_pokemon(pokemon_id: int):
 
 
 @router.put("/{pokemon_id}")
-def update_pokemon(pokemon_id: int, updated_pokemon: PokemonUpdate):
+def update_pokemon(
+    pokemon_id: int,
+    updated_pokemon: PokemonUpdate,
+    current_user=Depends(get_current_user),
+):
     return put_update_pokemon_service(pokemon_id, updated_pokemon)
 
 
 @router.put("/{pokemon_id}/trainer/{trainer_id}")
-def assign_trainer(pokemon_id: int, trainer_id: int):
+def assign_trainer(
+    pokemon_id: int,
+    trainer_id: int,
+    current_user=Depends(get_current_user),
+):
     return assign_trainer_service(pokemon_id, trainer_id)
 
 
 @router.delete("/{pokemon_id}")
-def delete_pokemon(pokemon_id: int):
+def delete_pokemon(
+    pokemon_id: int,
+    current_user=Depends(get_current_user),
+):
     return delete_pokemon_service(pokemon_id)

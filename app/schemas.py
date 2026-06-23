@@ -47,3 +47,18 @@ class TrainerUpdate(SQLModel):
 class TrainerRead(SQLModel):
     id: int
     name: str
+
+
+class UserCreate(SQLModel):
+    email: str
+    password: str
+
+
+class UserRead(SQLModel):
+    id: int
+    email: str
+
+
+class UserLogin(SQLModel):
+    email: str
+    password: str
