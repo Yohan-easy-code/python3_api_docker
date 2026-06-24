@@ -63,7 +63,7 @@ def assign_trainer(
     trainer_id: int,
     current_user=Depends(get_current_user),
 ):
-    return assign_trainer_service(pokemon_id, trainer_id)
+    return assign_trainer_service(pokemon_id, trainer_id, current_user)
 
 
 @router.delete("/{pokemon_id}")
@@ -71,4 +71,4 @@ def delete_pokemon(
     pokemon_id: int,
     current_user=Depends(get_current_user),
 ):
-    return delete_pokemon_service(pokemon_id)
+    return delete_pokemon_service(pokemon_id, current_user)

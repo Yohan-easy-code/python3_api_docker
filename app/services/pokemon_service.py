@@ -1,6 +1,8 @@
 from sqlmodel import Session, select
 from fastapi import HTTPException
 
+from app.services.permissions import check_pokemon_owner_or_admin
+
 from app.database import engine
 from app.models.pokemon import Pokemon
 from app.schemas import PokemonCreate, PokemonUpdate
@@ -87,14 +89,14 @@ def get_pokemon_service(pokemon_id: int):
 def put_update_pokemon_service(
     pokemon_id: int, updated_pokemon: PokemonUpdate, current_user
 ):
+
     with Session(engine) as session:
         pokemon = session.get(Pokemon, pokemon_id)
 
-        if pokemon.created_by != current_user.id:
-            raise HTTPException(status_code=403, detail="Not allowed")
-
         if pokemon is None:
             raise HTTPException(status_code=404, detail="Pokemon not found")
+
+        check_pokemon_owner_or_admin(pokemon, current_user)
 
         pokemon.name = updated_pokemon.name
         pokemon.hp = updated_pokemon.hp
@@ -108,14 +110,14 @@ def put_update_pokemon_service(
 
 
 def delete_pokemon_service(pokemon_id: int, current_user):
+
     with Session(engine) as session:
         pokemon = session.get(Pokemon, pokemon_id)
 
-        if pokemon.created_by != current_user.id:
-            raise HTTPException(status_code=403, detail="Not allowed")
-
         if pokemon is None:
             raise HTTPException(status_code=404, detail="Pokemon not found")
+
+        check_pokemon_owner_or_admin(pokemon, current_user)
 
         session.delete(pokemon)
         session.commit()
@@ -123,12 +125,14 @@ def delete_pokemon_service(pokemon_id: int, current_user):
         return {"message": "Pokemon deleted"}
 
 
-def assign_trainer_service(pokemon_id: int, trainer_id: int):
+def assign_trainer_service(pokemon_id: int, trainer_id: int, current_user):
 
     pokemon = get_pokemon_repository(pokemon_id)
 
     if pokemon is None:
         raise HTTPException(status_code=404, detail="Pokemon not found")
+
+    check_pokemon_owner_or_admin(pokemon, current_user)
 
     trainer = get_trainer_repository(trainer_id)
 
