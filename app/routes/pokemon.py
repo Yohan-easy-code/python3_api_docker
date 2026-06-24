@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 
 from app.database import engine
 from app.models.pokemon import Pokemon
-from app.schemas import PokemonCreate, PokemonUpdate
+from app.schemas import PokemonCreate, PokemonUpdate, PokemonRead
 from app.services.pokemon_service import (
     create_pokemon_service,
     get_pokemons_service,
@@ -18,7 +18,7 @@ from app.services.auth_service import get_current_user
 router = APIRouter(prefix="/pokemon", tags=["Pokemon"])
 
 
-@router.post("/")
+@router.post("/", response_model=PokemonRead)
 def create_pokemon(
     pokemon: PokemonCreate,
     current_user=Depends(get_current_user),
@@ -26,7 +26,7 @@ def create_pokemon(
     return create_pokemon_service(pokemon, current_user.id)
 
 
-@router.get("/")
+@router.get("/", response_model=list[PokemonRead])
 def get_pokemons(
     offset: int = 0,
     limit: int = 10,
@@ -43,7 +43,7 @@ def search_pokemons(name: str):
     return search_pokemons_by_name_service(name)
 
 
-@router.get("/{pokemon_id}")
+@router.get("/{pokemon_id}", response_model=PokemonRead)
 def get_pokemon(pokemon_id: int):
     return get_pokemon_service(pokemon_id)
 

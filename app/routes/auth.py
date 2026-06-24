@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.schemas import UserCreate, UserRead, UserLogin
+from app.schemas import UserCreate, UserResponse, UserLogin, UserRead
 from app.services.auth_service import (
     register_user_service,
     login_user_service,
@@ -22,6 +22,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     return login_user_service(form_data)
 
 
-@router.get("/me", response_model=UserRead)
+@router.get("/me", response_model=UserResponse)
 def get_me(current_user=Depends(get_current_user)):
     return current_user

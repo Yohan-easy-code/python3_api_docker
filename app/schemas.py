@@ -27,7 +27,8 @@ class PokemonRead(SQLModel):
     attack: str
     mana: int
     capa: str
-    trainer_id: int | None = None
+    trainer_id: int | None
+    created_by: int | None
 
 
 class TrainerReadWithPokemons(SQLModel):
@@ -62,3 +63,9 @@ class UserRead(SQLModel):
 class UserLogin(SQLModel):
     email: str
     password: str
+
+
+class UserResponse(SQLModel):
+    id: int
+    email: str
+    role: str
