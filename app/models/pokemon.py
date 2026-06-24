@@ -23,5 +23,6 @@ class Pokemon(SQLModel, table=True):
             Integer, ForeignKey("trainer.id", ondelete="SET NULL"), nullable=True
         ),
     )
+    created_by: int | None = Field(default=None, foreign_key="users.id")
 
     trainer: Optional["Trainer"] = Relationship(back_populates="pokemons")

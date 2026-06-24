@@ -31,13 +31,13 @@ def register_user_service(user: UserCreate):
     return create_user_repository(db_user)
 
 
-def login_user_service(user_login):
-    user = get_user_by_email_repository(user_login.email)
+def login_user_service(form_data):
+    user = get_user_by_email_repository(form_data.username)
 
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    is_password_valid = pwd_context.verify(user_login.password, user.hashed_password)
+    is_password_valid = pwd_context.verify(form_data.password, user.hashed_password)
 
     if is_password_valid is False:
         raise HTTPException(status_code=401, detail="Invalid credentials")
