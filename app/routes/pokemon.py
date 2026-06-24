@@ -23,7 +23,7 @@ def create_pokemon(
     pokemon: PokemonCreate,
     current_user=Depends(get_current_user),
 ):
-    return create_pokemon_service(pokemon)
+    return create_pokemon_service(pokemon, current_user.id)
 
 
 @router.get("/")

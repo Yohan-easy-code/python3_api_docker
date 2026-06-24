@@ -17,7 +17,7 @@ from app.repositories.trainer_repository import (
 )
 
 
-def create_pokemon_service(pokemon: PokemonCreate):
+def create_pokemon_service(pokemon: PokemonCreate, user_id: int):
 
     if pokemon.trainer_id is not None:
         trainer = get_trainer_repository(pokemon.trainer_id)
@@ -43,6 +43,7 @@ def create_pokemon_service(pokemon: PokemonCreate):
         mana=pokemon.mana,
         capa=pokemon.capa,
         trainer_id=pokemon.trainer_id,
+        created_by=user_id,
     )
 
     return create_pokemon_repository(db_pokemon)
@@ -89,6 +90,9 @@ def put_update_pokemon_service(pokemon_id: int, updated_pokemon: PokemonUpdate):
 
         if pokemon is None:
             raise HTTPException(status_code=404, detail="Pokemon not found")
+
+        if pokemon.created_by != current_user.id:
+            raise HTTPException(status_code=403, detail="Not allowed")
 
         pokemon.name = updated_pokemon.name
         pokemon.hp = updated_pokemon.hp
