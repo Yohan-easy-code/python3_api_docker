@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.schemas import TrainerCreate, TrainerReadWithPokemons, TrainerRead
+from app.services.permissions import check_admin
 from app.services.trainer_service import (
     create_trainer_service,
     get_trainers_service,
@@ -14,6 +15,7 @@ router = APIRouter(prefix="/trainers", tags=["Trainers"])
 
 @router.post("/", response_model=list[TrainerRead])
 def create_trainer(trainer: TrainerCreate, current_user=Depends(get_current_user)):
+    check_admin(current_user)
     return create_trainer_service(trainer)
 
 
@@ -29,4 +31,5 @@ def get_trainer(trainer_id: int):
 
 @router.delete("/{trainer_id}")
 def delete_trainer(trainer_id: int, current_user=Depends(get_current_user)):
+    check_admin(current_user)
     return delete_trainer_service(trainer_id)

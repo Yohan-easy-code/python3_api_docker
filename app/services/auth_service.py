@@ -2,6 +2,11 @@ from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 
@@ -47,9 +52,9 @@ def login_user_service(form_data):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-SECRET_KEY = "change_this_secret_key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
 
 def create_access_token(data: dict):
@@ -65,20 +70,25 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
         email = payload.get("sub")
 
         if email is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            raise credentials_exception
 
     except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise credentials_exception
 
     user = get_user_by_email_repository(email)
 
     if user is None:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise credentials_exception
 
     return user
