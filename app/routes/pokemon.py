@@ -54,7 +54,7 @@ def update_pokemon(
     updated_pokemon: PokemonUpdate,
     current_user=Depends(get_current_user),
 ):
-    return put_update_pokemon_service(pokemon_id, updated_pokemon)
+    return put_update_pokemon_service(pokemon_id, updated_pokemon, current_user)
 
 
 @router.put("/{pokemon_id}/trainer/{trainer_id}")

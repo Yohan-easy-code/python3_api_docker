@@ -84,15 +84,17 @@ def get_pokemon_service(pokemon_id: int):
         return pokemon
 
 
-def put_update_pokemon_service(pokemon_id: int, updated_pokemon: PokemonUpdate):
+def put_update_pokemon_service(
+    pokemon_id: int, updated_pokemon: PokemonUpdate, current_user
+):
     with Session(engine) as session:
         pokemon = session.get(Pokemon, pokemon_id)
 
-        if pokemon is None:
-            raise HTTPException(status_code=404, detail="Pokemon not found")
-
         if pokemon.created_by != current_user.id:
             raise HTTPException(status_code=403, detail="Not allowed")
+
+        if pokemon is None:
+            raise HTTPException(status_code=404, detail="Pokemon not found")
 
         pokemon.name = updated_pokemon.name
         pokemon.hp = updated_pokemon.hp
@@ -105,9 +107,12 @@ def put_update_pokemon_service(pokemon_id: int, updated_pokemon: PokemonUpdate):
         return pokemon
 
 
-def delete_pokemon_service(pokemon_id: int):
+def delete_pokemon_service(pokemon_id: int, current_user):
     with Session(engine) as session:
         pokemon = session.get(Pokemon, pokemon_id)
+
+        if pokemon.created_by != current_user.id:
+            raise HTTPException(status_code=403, detail="Not allowed")
 
         if pokemon is None:
             raise HTTPException(status_code=404, detail="Pokemon not found")
