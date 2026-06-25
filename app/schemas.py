@@ -69,3 +69,7 @@ class UserResponse(SQLModel):
     id: int
     email: str
     role: str
+
+
+class RefreshTokenRequest(SQLModel):
+    refresh_token: str
